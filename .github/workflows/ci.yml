@@ -1,0 +1,94 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  quality:
+    name: Lint · Test · Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup @vistaremote/shared (CI layout)
+        id: shared
+        uses: ./.github/actions/setup-shared
+        with:
+          consumer: mobile
+          shared-ref: main
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.11'
+          cache: pnpm
+          cache-dependency-path: ${{ steps.shared.outputs.consumer-path }}/pnpm-lock.yaml
+
+      - name: Install · lint · test · build
+        working-directory: ${{ steps.shared.outputs.consumer-path }}
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm lint
+          pnpm test
+          pnpm build
+
+  security-audit:
+    name: Dependency audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup @vistaremote/shared (CI layout)
+        id: shared
+        uses: ./.github/actions/setup-shared
+        with:
+          consumer: mobile
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.11'
+
+      - name: pnpm audit
+        working-directory: ${{ steps.shared.outputs.consumer-path }}
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm audit --audit-level=high
+
+  codeql:
+    name: CodeQL
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup @vistaremote/shared (CI layout)
+        id: shared
+        uses: ./.github/actions/setup-shared
+        with:
+          consumer: mobile
+
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.11'
+
+      - name: Build for analysis
+        working-directory: ${{ steps.shared.outputs.consumer-path }}
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+
+      - uses: github/codeql-action/analyze@v3
