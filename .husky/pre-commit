@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+# @vistaremote/husky
+set -e
+cd "$(dirname "$0")/.."
+sh ../tooling/husky/pre-commit.sh

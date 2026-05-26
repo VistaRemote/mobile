@@ -25,7 +25,8 @@ VistaRemote **移动端主控**（React Native 新架构 + JSI）：触控远控
 pnpm setup
 cp .env.example .env
 pnpm start          # 带 env 的 Metro
-pnpm android        # 或 pnpm ios
+pnpm android        # 模拟器/真机调试（需 Android SDK）
+pnpm android:apk    # 产出 app-debug.apk
 ```
 
 ## 性能约定

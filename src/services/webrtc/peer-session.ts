@@ -11,5 +11,5 @@ export class MobilePeerSession {
     this.mode = payload.mode;
   }
 
-  // P1: RTCPeerConnection from react-native-webrtc + RTCView
+  /** @deprecated MVP 使用 {@link RemoteSessionController} */
 }

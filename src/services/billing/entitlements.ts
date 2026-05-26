@@ -1,6 +1,6 @@
 import type { ClientEntitlements } from '@vistaremote/shared';
 import { featureGateMessage } from '@vistaremote/shared';
-import { API_BASE } from '../config/env';
+import { API_BASE } from '../../config/env';
 
 export async function fetchEntitlements(userId: string): Promise<ClientEntitlements> {
   const res = await fetch(`${API_BASE}/api/v1/billing/entitlements`, {

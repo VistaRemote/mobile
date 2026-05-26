@@ -1,9 +1,24 @@
-import { Text, View } from 'react-native';
+import { useState } from 'react';
+import { SafeAreaView, StatusBar, StyleSheet } from 'react-native';
+import type { JoinPairingResponse } from '@vistaremote/shared';
+import { PairingScreen } from './screens/PairingScreen';
+import { RemoteSessionScreen } from './screens/RemoteSessionScreen';
 
 export default function App() {
+  const [join, setJoin] = useState<JoinPairingResponse | null>(null);
+
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>VistaRemote Mobile（需 `npx @react-native-community/cli init` 生成原生工程）</Text>
-    </View>
+    <SafeAreaView style={styles.root}>
+      <StatusBar barStyle="light-content" />
+      {join ? (
+        <RemoteSessionScreen join={join} onDisconnect={() => setJoin(null)} />
+      ) : (
+        <PairingScreen onJoined={setJoin} />
+      )}
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  root: { flex: 1, backgroundColor: '#f5f5f5' },
+});
